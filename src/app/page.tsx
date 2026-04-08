@@ -6,6 +6,8 @@ import { CATEGORIES } from "@/lib/categories";
 import { CategoryTile } from "@/components/CategoryTile";
 import { ProductCard } from "@/components/ProductCard";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   // Featured / bestseller picks
   const bestsellers = await prisma.product.findMany({

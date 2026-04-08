@@ -1,11 +1,14 @@
-import path from "node:path";
 import { PrismaClient } from "@/generated/prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-// Prisma 7 + DATABASE_URL="file:./dev.db" creates the DB at project root.
-const dbPath = path.join(process.cwd(), "dev.db");
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  throw new Error(
+    "DATABASE_URL is not set. Add it to .env locally or to Vercel environment variables for production."
+  );
+}
 
-const adapter = new PrismaBetterSqlite3({ url: dbPath });
+const adapter = new PrismaPg({ connectionString: databaseUrl });
 
 const globalForPrisma = globalThis as unknown as {
   prisma?: PrismaClient;

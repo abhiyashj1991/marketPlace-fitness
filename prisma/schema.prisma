@@ -1,5 +1,5 @@
-// Marketplace Fitness — Prisma schema
-// SQLite for dev. Switch provider/url to PostgreSQL for prod.
+// Marketplace Fitness — Prisma schema (Postgres)
+// DATABASE_URL is configured in prisma.config.ts (read from .env / Vercel env).
 
 generator client {
   provider = "prisma-client"
@@ -7,7 +7,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 // ===== Catalog =====

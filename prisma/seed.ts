@@ -5,15 +5,22 @@
  * the research-agent run) and seeds Brands, Products, and Trainers.
  *
  * Run with: `npm run db:seed`  (which calls `tsx prisma/seed.ts`)
+ *
+ * Requires DATABASE_URL to be set in the environment (loaded via dotenv from
+ * .env when run via tsx, or directly from Vercel env vars).
  */
+import "dotenv/config";
 import path from "node:path";
 import fs from "node:fs";
 import { PrismaClient } from "../src/generated/prisma/client.ts";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-// Prisma 7 + DATABASE_URL="file:./dev.db" creates the DB at project root.
-const dbPath = path.join(process.cwd(), "dev.db");
-const adapter = new PrismaBetterSqlite3({ url: dbPath });
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL is not set. Add it to .env before running seed.");
+}
+
+const adapter = new PrismaPg({ connectionString: databaseUrl });
 const prisma = new PrismaClient({ adapter });
 
 type SeedProduct = {
@@ -45,8 +52,6 @@ const CATEGORY_FILES = [
   "multivitamin.json",
 ];
 
-// Mirror of CATEGORIES color map (kept inline so this script doesn't need to
-// import from src/, which uses path aliases that tsx doesn't resolve).
 const CATEGORY_COLORS: Record<string, string> = {
   WHEY_PROTEIN: "059669",
   CREATINE: "2563eb",
