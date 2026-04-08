@@ -1,0 +1,53 @@
+[
+  {
+    "name": "MuscleBlaze Super Gainer XXL 3kg Chocolate",
+    "slug": "muscleblaze-super-gainer-xxl-3kg-chocolate",
+    "brand": "MuscleBlaze",
+    "category": "MASS_GAINER",
+    "priceMrp": 4199,
+    "priceSale": 2749,
+    "description": "A high-calorie mass gainer delivering around 563 kcal per serving with a 1:5 protein-to-carb ratio to support aggressive weight and muscle gain. Enriched with digestive enzymes for better absorption, it is ideal for hardgainers and lean individuals struggling to hit daily calorie targets. Best consumed post-workout or between meals as a calorie-dense shake.",
+    "caloriesPerServing": 563,
+    "proteinPerServing": "15g",
+    "servingsPerContainer": 20,
+    "rating": 4.3,
+    "reviewCount": 4120,
+    "stock": 38,
+    "isBestseller": true,
+    "isSellingFast": false
+  },
+  {
+    "name": "Optimum Nutrition Serious Mass 3kg Chocolate",
+    "slug": "optimum-nutrition-serious-mass-3kg-chocolate",
+    "brand": "Optimum Nutrition",
+    "category": "MASS_GAINER",
+    "priceMrp": 5999,
+    "priceSale": 4299,
+    "description": "A premium weight gainer packing 1250 calories and 50g of protein per serving with a high-carb matrix to fuel serious size and strength gains. Fortified with 25 vitamins and minerals, creatine, and glutamine, it is built for hardgainers and athletes in a bulking phase. Mix with whole milk for maximum calories or water for a lighter shake.",
+    "caloriesPerServing": 1250,
+    "proteinPerServing": "50g",
+    "servingsPerContainer": 8,
+    "rating": 4.5,
+    "reviewCount": 2870,
+    "stock": 22,
+    "isBestseller": false,
+    "isSellingFast": true
+  },
+  {
+    "name": "GNC Pro Performance Weight Gainer 2.2kg Vanilla Cream",
+    "slug": "gnc-pro-performance-weight-gainer-2-2kg-vanilla-cream",
+    "brand": "GNC",
+    "category": "MASS_GAINER",
+    "priceMrp": 3499,
+    "priceSale": 2499,
+    "description": "A balanced weight gainer providing about 690 calories and 34g of high-quality protein per serving with a moderate carb load for steady, clean bulking. Formulated with added BCAAs and essential vitamins to support recovery and lean mass development. Suited for gym-goers who want calorie-dense nutrition without excessive sugar loading.",
+    "caloriesPerServing": 690,
+    "proteinPerServing": "34g",
+    "servingsPerContainer": 14,
+    "rating": 4.1,
+    "reviewCount": 1340,
+    "stock": 27,
+    "isBestseller": false,
+    "isSellingFast": false
+  }
+]

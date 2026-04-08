@@ -1,0 +1,50 @@
+[
+  {
+    "name": "MuscleBlaze Biozyme Performance Whey 1kg Rich Chocolate",
+    "slug": "muscleblaze-biozyme-performance-whey-1kg-rich-chocolate",
+    "brand": "MuscleBlaze",
+    "category": "WHEY_PROTEIN",
+    "priceMrp": 4199,
+    "priceSale": 3149,
+    "description": "Delivers 25g of protein per 33g scoop with EAAS 9.1 enzyme blend that claims up to 50 percent better protein absorption. Uses whey concentrate and isolate blend with added digestive enzymes, BCAAs and glutamic acid. A popular pick among Indian lifters for its taste and mixability.",
+    "proteinPerServing": "25g",
+    "servingsPerContainer": 30,
+    "rating": 4.3,
+    "reviewCount": 4827,
+    "stock": 32,
+    "isBestseller": true,
+    "isSellingFast": false
+  },
+  {
+    "name": "Optimum Nutrition Gold Standard 100% Whey 2lb Double Rich Chocolate",
+    "slug": "optimum-nutrition-gold-standard-100-whey-2lb-double-rich-chocolate",
+    "brand": "Optimum Nutrition",
+    "category": "WHEY_PROTEIN",
+    "priceMrp": 6499,
+    "priceSale": 5299,
+    "description": "Provides 24g of protein per 30.4g serving from whey protein isolate as the primary source, along with 5.5g BCAAs and 4g glutamine. Low in fat and sugar with a well-known reputation for clean labels and third-party testing. One of the most trusted imported whey brands in India.",
+    "proteinPerServing": "24g",
+    "servingsPerContainer": 29,
+    "rating": 4.5,
+    "reviewCount": 3612,
+    "stock": 21,
+    "isBestseller": false,
+    "isSellingFast": true
+  },
+  {
+    "name": "MyProtein Impact Whey Protein 1kg Chocolate Smooth",
+    "slug": "myprotein-impact-whey-protein-1kg-chocolate-smooth",
+    "brand": "MyProtein",
+    "category": "WHEY_PROTEIN",
+    "priceMrp": 3899,
+    "priceSale": 2799,
+    "description": "Offers 21g of protein per 25g serving from whey concentrate with 4.5g BCAAs and 3.6g glutamine naturally present. Low in sugar at under 2g per serving and available in 40 servings per 1kg pouch. A budget-friendly import favoured by beginners and intermediate lifters.",
+    "proteinPerServing": "21g",
+    "servingsPerContainer": 40,
+    "rating": 4.2,
+    "reviewCount": 2184,
+    "stock": 44,
+    "isBestseller": false,
+    "isSellingFast": false
+  }
+]

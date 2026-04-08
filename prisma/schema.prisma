@@ -1,0 +1,137 @@
+// Marketplace Fitness — Prisma schema
+// SQLite for dev. Switch provider/url to PostgreSQL for prod.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ===== Catalog =====
+
+model Brand {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  logoUrl  String?
+  products Product[]
+}
+
+model Product {
+  id          String  @id @default(cuid())
+  slug        String  @unique
+  name        String
+  description String
+  // Category stored as string since SQLite has no native enum.
+  // Allowed values: WHEY_PROTEIN | CREATINE | FAT_BURNER | MASS_GAINER | MULTIVITAMIN
+  category    String
+  brandId     String
+  brand       Brand   @relation(fields: [brandId], references: [id])
+
+  priceMrp  Int // INR (whole rupees)
+  priceSale Int
+  stock     Int @default(0)
+
+  imageUrl    String?
+  rating      Float @default(0)
+  reviewCount Int   @default(0)
+
+  isBestseller  Boolean @default(false)
+  isSellingFast Boolean @default(false)
+
+  // Optional category-specific specs (sparse on each row, kept flat for simplicity)
+  proteinPerServing    String?
+  servingsPerContainer Int?
+  dosePerServing       String?
+  capsules             Int?
+  tablets              Int?
+  caloriesPerServing   Int?
+
+  reviews    Review[]
+  orderItems OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([brandId])
+  @@index([isBestseller])
+  @@index([isSellingFast])
+}
+
+model Review {
+  id           String  @id @default(cuid())
+  productId    String
+  product      Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customerName String
+  rating       Int
+  comment      String
+
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+}
+
+// ===== Trainers =====
+
+model Trainer {
+  id         String  @id @default(cuid())
+  name       String
+  phone      String?
+  email      String?
+  uniqueCode String  @unique
+  isActive   Boolean @default(true)
+
+  orders    Order[]
+  createdAt DateTime @default(now())
+}
+
+// ===== Orders =====
+
+model Order {
+  id String @id @default(cuid())
+
+  customerName  String
+  customerPhone String
+  addressLine   String
+  city          String @default("Indore")
+  pincode       String
+
+  subtotal       Int
+  discountAmount Int @default(0)
+  total          Int
+
+  trainerCodeUsed String?
+  trainer         Trainer? @relation(fields: [trainerCodeUsed], references: [uniqueCode])
+
+  // CASH | UPI
+  paymentMethod String
+  // UTR / txn id for UPI; null for cash
+  paymentRef String?
+  // PENDING | CONFIRMED | DELIVERED | CANCELLED
+  status String @default("PENDING")
+
+  items OrderItem[]
+
+  createdAt DateTime @default(now())
+
+  @@index([trainerCodeUsed])
+  @@index([createdAt])
+  @@index([status])
+}
+
+model OrderItem {
+  id                  String  @id @default(cuid())
+  orderId             String
+  order               Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId           String
+  product             Product @relation(fields: [productId], references: [id])
+  productNameSnapshot String
+  quantity            Int
+  priceSnapshot       Int
+
+  @@index([orderId])
+  @@index([productId])
+}

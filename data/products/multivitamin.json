@@ -1,0 +1,50 @@
+[
+  {
+    "name": "MuscleBlaze MB-Vite Daily Multivitamin 60 Tablets",
+    "slug": "muscleblaze-mb-vite-daily-multivitamin-60-tablets",
+    "brand": "MuscleBlaze",
+    "category": "MULTIVITAMIN",
+    "priceMrp": 1299,
+    "priceSale": 849,
+    "description": "MB-Vite is a comprehensive daily multivitamin packed with 43 vital nutrients including Vitamin C, D3, B-complex, Zinc, and a herbal blend with Ginseng and Ashwagandha. Designed for active Indian men and women, it supports immunity, energy metabolism, and post-workout recovery. Ideal for gym-goers seeking daily micronutrient support.",
+    "tablets": 60,
+    "servingsPerContainer": 60,
+    "rating": 4.3,
+    "reviewCount": 3450,
+    "stock": 42,
+    "isBestseller": true,
+    "isSellingFast": false
+  },
+  {
+    "name": "GNC Mega Men Sport Multivitamin 90 Tablets",
+    "slug": "gnc-mega-men-sport-multivitamin-90-tablets",
+    "brand": "GNC",
+    "category": "MULTIVITAMIN",
+    "priceMrp": 3499,
+    "priceSale": 2549,
+    "description": "GNC Mega Men Sport is a performance-focused multivitamin formulated for athletes and serious gym-goers, delivering high-potency B vitamins, antioxidants, and amino acids for muscle function and recovery. Contains Vitamin D3, Zinc, and BCAAs to support testosterone levels, endurance, and immune health. A trusted choice for men pursuing peak training performance.",
+    "tablets": 90,
+    "servingsPerContainer": 45,
+    "rating": 4.5,
+    "reviewCount": 2180,
+    "stock": 25,
+    "isBestseller": false,
+    "isSellingFast": true
+  },
+  {
+    "name": "Optimum Nutrition Opti-Men Multivitamin 90 Tablets",
+    "slug": "optimum-nutrition-opti-men-multivitamin-90-tablets",
+    "brand": "Optimum Nutrition",
+    "category": "MULTIVITAMIN",
+    "priceMrp": 2999,
+    "priceSale": 2199,
+    "description": "Opti-Men by Optimum Nutrition delivers over 75 active ingredients including 25+ vitamins and minerals, an amino acid blend, and phyto-nutrients tailored for active men. Supports immune function, energy production, and muscle performance with Vitamin E, D, and a free-form amino blend. A globally trusted multivitamin for dedicated fitness enthusiasts.",
+    "tablets": 90,
+    "servingsPerContainer": 30,
+    "rating": 4.4,
+    "reviewCount": 1870,
+    "stock": 33,
+    "isBestseller": false,
+    "isSellingFast": false
+  }
+]

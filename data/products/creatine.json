@@ -1,0 +1,50 @@
+[
+  {
+    "name": "MuscleBlaze Creatine Monohydrate 250g Unflavoured",
+    "slug": "muscleblaze-creatine-monohydrate-250g-unflavoured",
+    "brand": "MuscleBlaze",
+    "category": "CREATINE",
+    "priceMrp": 1299,
+    "priceSale": 849,
+    "description": "Micronized creatine monohydrate delivering 3g of pure creatine per serving to support strength, power output, and lean muscle gains. Unflavoured and easily mixable with water, juice, or protein shakes. Lab-tested for purity with no added fillers.",
+    "dosePerServing": "3.4g",
+    "servingsPerContainer": 73,
+    "rating": 4.3,
+    "reviewCount": 4200,
+    "stock": 35,
+    "isBestseller": true,
+    "isSellingFast": false
+  },
+  {
+    "name": "Optimum Nutrition Micronized Creatine Powder 317g Unflavoured",
+    "slug": "optimum-nutrition-micronized-creatine-powder-317g-unflavoured",
+    "brand": "Optimum Nutrition",
+    "category": "CREATINE",
+    "priceMrp": 2499,
+    "priceSale": 1899,
+    "description": "Creapure-sourced micronized creatine monohydrate providing 5g per serving for improved ATP regeneration, strength, and recovery. The micronized form mixes more easily and reduces grittiness compared to standard creatine. Unflavoured powder with no additives.",
+    "dosePerServing": "5g",
+    "servingsPerContainer": 63,
+    "rating": 4.5,
+    "reviewCount": 2850,
+    "stock": 22,
+    "isBestseller": false,
+    "isSellingFast": true
+  },
+  {
+    "name": "GNC Pro Performance Creatine Monohydrate 250g Unflavoured",
+    "slug": "gnc-pro-performance-creatine-monohydrate-250g-unflavoured",
+    "brand": "GNC",
+    "category": "CREATINE",
+    "priceMrp": 1799,
+    "priceSale": 1199,
+    "description": "Pharmaceutical-grade creatine monohydrate delivering 5g per scoop to boost muscle energy, power, and high-intensity performance. Unflavoured and sugar-free, suitable for mixing into any beverage. Supports both loading and maintenance phases.",
+    "dosePerServing": "5g",
+    "servingsPerContainer": 50,
+    "rating": 4.2,
+    "reviewCount": 1650,
+    "stock": 28,
+    "isBestseller": false,
+    "isSellingFast": false
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "name": "MuscleBlaze Fat Burner 90 Capsules",
+    "slug": "muscleblaze-fat-burner-90-capsules",
+    "brand": "MuscleBlaze",
+    "category": "FAT_BURNER",
+    "priceMrp": 1899,
+    "priceSale": 1199,
+    "description": "A thermogenic fat burner formulated with green tea extract, L-carnitine, green coffee bean extract and caffeine anhydrous to support metabolism and energy during workouts. Designed for gym-goers pursuing a calorie-deficit cutting phase alongside a balanced diet.",
+    "capsules": 90,
+    "servingsPerContainer": 45,
+    "rating": 4.1,
+    "reviewCount": 3820,
+    "stock": 32,
+    "isBestseller": true,
+    "isSellingFast": false
+  },
+  {
+    "name": "MuscleTech Hydroxycut Hardcore Elite 100 Capsules",
+    "slug": "muscletech-hydroxycut-hardcore-elite-100-capsules",
+    "brand": "MuscleTech",
+    "category": "FAT_BURNER",
+    "priceMrp": 3999,
+    "priceSale": 2799,
+    "description": "An advanced thermogenic containing caffeine anhydrous, green coffee bean extract, coleus forskohlii and L-theanine to support energy, focus and thermogenesis. Intended for experienced users combining training and a controlled diet during a cutting cycle.",
+    "capsules": 100,
+    "servingsPerContainer": 50,
+    "rating": 4.3,
+    "reviewCount": 1640,
+    "stock": 22,
+    "isBestseller": false,
+    "isSellingFast": true
+  },
+  {
+    "name": "Nutrex Research Lipo-6 Black Ultra Concentrate 60 Capsules",
+    "slug": "nutrex-research-lipo-6-black-ultra-concentrate-60-capsules",
+    "brand": "Nutrex Research",
+    "category": "FAT_BURNER",
+    "priceMrp": 3499,
+    "priceSale": 2499,
+    "description": "A highly concentrated single-capsule thermogenic with caffeine anhydrous, theobromine, yohimbine HCl and advantra Z for appetite control and energy support. Recommended for advanced users who already tolerate stimulants and follow a structured cutting plan.",
+    "capsules": 60,
+    "servingsPerContainer": 60,
+    "rating": 4.2,
+    "reviewCount": 1280,
+    "stock": 18,
+    "isBestseller": false,
+    "isSellingFast": false
+  }
+]
