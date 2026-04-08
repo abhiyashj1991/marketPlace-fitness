@@ -1,8 +1,9 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Star, Award, Flame, ShieldCheck, Truck, MapPin } from "lucide-react";
 import { prisma } from "@/lib/db";
-import { categoryLabel, categorySlug } from "@/lib/categories";
+import { categoryLabel, categorySlug, productImageUrl } from "@/lib/categories";
 import { formatPriceINR, discountPercent } from "@/lib/utils";
 import { AddToCartButton } from "@/components/AddToCartButton";
 
@@ -33,13 +34,18 @@ export default async function ProductDetailPage({
   const { slug } = await params;
   const product = await prisma.product.findUnique({
     where: { slug },
-    include: { brand: true, reviews: { orderBy: { createdAt: "desc" }, take: 5 } },
+    include: {
+      brand: true,
+      reviews: { orderBy: { createdAt: "desc" }, take: 5 },
+    },
   });
 
   if (!product) notFound();
 
   const discount = discountPercent(product.priceMrp, product.priceSale);
   const outOfStock = product.stock <= 0;
+  const imageSrc =
+    product.imageUrl ?? productImageUrl(product.category, product.name);
 
   // Sparse spec list — only show fields that have a value
   const specs: Array<[string, string]> = [];
@@ -73,11 +79,16 @@ export default async function ProductDetailPage({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Image */}
-        <div className="relative aspect-square bg-gradient-to-br from-emerald-50 via-emerald-100 to-emerald-200 rounded-2xl flex items-center justify-center overflow-hidden">
-          <div className="text-emerald-700/20 text-9xl font-black select-none">
-            {product.brand.name[0]}
-          </div>
-          <div className="absolute top-4 left-4 flex flex-col gap-2">
+        <div className="relative aspect-square bg-slate-100 rounded-2xl overflow-hidden">
+          <Image
+            src={imageSrc}
+            alt={product.name}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
+            priority
+          />
+          <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
             {product.isBestseller && (
               <span className="inline-flex items-center gap-1 bg-amber-500 text-white text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded-full shadow">
                 <Award className="w-3.5 h-3.5" />

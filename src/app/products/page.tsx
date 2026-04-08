@@ -47,7 +47,10 @@ export default async function ProductsPage({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <aside className="lg:col-span-3">
           <div className="bg-white border border-border rounded-2xl p-5 sticky top-24">
-            <ProductFilters brands={brands.map((b) => b.name)} />
+            <ProductFilters
+              brands={brands.map((b) => b.name)}
+              showCategoryFilter
+            />
           </div>
         </aside>
 

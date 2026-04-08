@@ -57,7 +57,7 @@ export default async function HomePage() {
           </div>
           <div className="relative aspect-square md:aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl">
             <Image
-              src="https://images.unsplash.com/photo-1583500178690-f7fd39c79658?w=900&q=80"
+              src="https://images.unsplash.com/photo-1607962837359-5e7e89f86776?w=900&q=80"
               alt="Fitness supplements display"
               fill
               priority

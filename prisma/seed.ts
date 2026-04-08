@@ -45,6 +45,25 @@ const CATEGORY_FILES = [
   "multivitamin.json",
 ];
 
+// Mirror of CATEGORIES color map (kept inline so this script doesn't need to
+// import from src/, which uses path aliases that tsx doesn't resolve).
+const CATEGORY_COLORS: Record<string, string> = {
+  WHEY_PROTEIN: "059669",
+  CREATINE: "2563eb",
+  FAT_BURNER: "dc2626",
+  MASS_GAINER: "ea580c",
+  MULTIVITAMIN: "9333ea",
+};
+
+function imageUrlFor(categoryKey: string, productName: string): string {
+  const color = CATEGORY_COLORS[categoryKey] ?? "059669";
+  const text =
+    productName.length > 30 ? productName.slice(0, 28) + "…" : productName;
+  return `https://placehold.co/600x600/${color}/FFFFFF.png?text=${encodeURIComponent(
+    text
+  )}`;
+}
+
 function loadProducts(): SeedProduct[] {
   const dataDir = path.join(process.cwd(), "data", "products");
   return CATEGORY_FILES.flatMap((file) => {
@@ -55,8 +74,7 @@ function loadProducts(): SeedProduct[] {
 }
 
 function generateTrainerCode(): string {
-  // TRN-XXXXXX with uppercase letters + digits
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // omit ambiguous chars
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let code = "TRN-";
   for (let i = 0; i < 6; i++) {
     code += chars[Math.floor(Math.random() * chars.length)];
@@ -86,9 +104,11 @@ async function main() {
     )
   );
   const brandIdByName = new Map(brandRecords.map((b) => [b.name, b.id]));
-  console.log(`  Created ${brandRecords.length} brands: ${uniqueBrandNames.join(", ")}`);
+  console.log(
+    `  Created ${brandRecords.length} brands: ${uniqueBrandNames.join(", ")}`
+  );
 
-  // 2. Create products
+  // 2. Create products with image URLs
   for (const p of products) {
     const brandId = brandIdByName.get(p.brand);
     if (!brandId) throw new Error(`Brand not found: ${p.brand}`);
@@ -106,6 +126,7 @@ async function main() {
         reviewCount: p.reviewCount,
         isBestseller: p.isBestseller,
         isSellingFast: p.isSellingFast,
+        imageUrl: imageUrlFor(p.category, p.name),
         proteinPerServing: p.proteinPerServing,
         servingsPerContainer: p.servingsPerContainer,
         dosePerServing: p.dosePerServing,
@@ -115,7 +136,7 @@ async function main() {
       },
     });
   }
-  console.log(`  Created ${products.length} products`);
+  console.log(`  Created ${products.length} products with image URLs`);
 
   // 3. Create 3 sample trainers with auto codes
   const trainers = [

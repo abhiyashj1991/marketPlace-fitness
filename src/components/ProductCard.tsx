@@ -1,7 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Star, Flame, Award } from "lucide-react";
 import { cn, formatPriceINR, discountPercent } from "@/lib/utils";
-import { categoryLabel } from "@/lib/categories";
+import { categoryLabel, productImageUrl } from "@/lib/categories";
 
 export type ProductCardData = {
   id: string;
@@ -11,6 +12,7 @@ export type ProductCardData = {
   brand: { name: string };
   priceMrp: number;
   priceSale: number;
+  imageUrl: string | null;
   rating: number;
   reviewCount: number;
   stock: number;
@@ -21,6 +23,7 @@ export type ProductCardData = {
 export function ProductCard({ product }: { product: ProductCardData }) {
   const discount = discountPercent(product.priceMrp, product.priceSale);
   const outOfStock = product.stock <= 0;
+  const imageSrc = product.imageUrl ?? productImageUrl(product.category, product.name);
 
   return (
     <Link
@@ -30,14 +33,18 @@ export function ProductCard({ product }: { product: ProductCardData }) {
         outOfStock && "opacity-70"
       )}
     >
-      {/* Image area — placeholder gradient since we have no real images */}
-      <div className="relative aspect-square bg-gradient-to-br from-emerald-50 via-emerald-100 to-emerald-200 flex items-center justify-center">
-        <div className="text-emerald-700/30 text-6xl font-black select-none">
-          {product.brand.name[0]}
-        </div>
+      {/* Image area */}
+      <div className="relative aspect-square bg-slate-100">
+        <Image
+          src={imageSrc}
+          alt={product.name}
+          fill
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+          className="object-cover"
+        />
 
         {/* Badges */}
-        <div className="absolute top-2 left-2 flex flex-col gap-1.5">
+        <div className="absolute top-2 left-2 flex flex-col gap-1.5 z-10">
           {product.isBestseller && (
             <span className="inline-flex items-center gap-1 bg-amber-500 text-white text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-full shadow-sm">
               <Award className="w-3 h-3" />
@@ -54,13 +61,13 @@ export function ProductCard({ product }: { product: ProductCardData }) {
 
         {/* Discount tag */}
         {discount > 0 && (
-          <div className="absolute top-2 right-2 bg-emerald-600 text-white text-xs font-bold px-2 py-1 rounded-md shadow-sm">
+          <div className="absolute top-2 right-2 bg-emerald-600 text-white text-xs font-bold px-2 py-1 rounded-md shadow-sm z-10">
             {discount}% OFF
           </div>
         )}
 
         {outOfStock && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-10">
             <span className="bg-white text-foreground text-sm font-bold px-4 py-2 rounded-md">
               Sold out
             </span>

@@ -4,17 +4,23 @@ import { useState, useTransition } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Star, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CATEGORIES } from "@/lib/categories";
 
 type Props = {
   brands: string[];
+  /** Show the 5-category filter section. Disable on /products/category/[slug] */
+  showCategoryFilter?: boolean;
 };
 
-export function ProductFilters({ brands }: Props) {
+export function ProductFilters({ brands, showCategoryFilter = false }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    params.get("category")?.split(",").filter(Boolean) ?? []
+  );
   const [selectedBrands, setSelectedBrands] = useState<string[]>(
     params.get("brand")?.split(",").filter(Boolean) ?? []
   );
@@ -28,6 +34,12 @@ export function ProductFilters({ brands }: Props) {
     params.get("sellingFast") === "1"
   );
 
+  function toggleCategory(key: string) {
+    setSelectedCategories((prev) =>
+      prev.includes(key) ? prev.filter((c) => c !== key) : [...prev, key]
+    );
+  }
+
   function toggleBrand(name: string) {
     setSelectedBrands((prev) =>
       prev.includes(name) ? prev.filter((b) => b !== name) : [...prev, name]
@@ -38,6 +50,9 @@ export function ProductFilters({ brands }: Props) {
     const next = new URLSearchParams();
     const sort = params.get("sort");
     if (sort) next.set("sort", sort);
+    if (showCategoryFilter && selectedCategories.length) {
+      next.set("category", selectedCategories.join(","));
+    }
     if (selectedBrands.length) next.set("brand", selectedBrands.join(","));
     if (minPrice) next.set("minPrice", minPrice);
     if (maxPrice) next.set("maxPrice", maxPrice);
@@ -50,6 +65,7 @@ export function ProductFilters({ brands }: Props) {
   }
 
   function reset() {
+    setSelectedCategories([]);
     setSelectedBrands([]);
     setMinPrice("");
     setMaxPrice("");
@@ -62,6 +78,7 @@ export function ProductFilters({ brands }: Props) {
   }
 
   const hasActive =
+    selectedCategories.length > 0 ||
     selectedBrands.length > 0 ||
     minPrice ||
     maxPrice ||
@@ -84,26 +101,56 @@ export function ProductFilters({ brands }: Props) {
         )}
       </div>
 
+      {/* Category */}
+      {showCategoryFilter && (
+        <div>
+          <h3 className="text-sm font-semibold text-foreground mb-3">
+            Category
+          </h3>
+          <div className="space-y-2">
+            {CATEGORIES.map((c) => (
+              <label
+                key={c.key}
+                className="flex items-center gap-2 text-sm text-foreground cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedCategories.includes(c.key)}
+                  onChange={() => toggleCategory(c.key)}
+                  className="w-4 h-4 accent-emerald-600"
+                />
+                {c.label}
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Quick toggles */}
-      <div className="space-y-2">
-        <label className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
-          <input
-            type="checkbox"
-            checked={bestseller}
-            onChange={(e) => setBestseller(e.target.checked)}
-            className="w-4 h-4 accent-emerald-600"
-          />
-          Bestsellers only
-        </label>
-        <label className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
-          <input
-            type="checkbox"
-            checked={sellingFast}
-            onChange={(e) => setSellingFast(e.target.checked)}
-            className="w-4 h-4 accent-emerald-600"
-          />
-          Selling fast
-        </label>
+      <div>
+        <h3 className="text-sm font-semibold text-foreground mb-3">
+          Quick Filters
+        </h3>
+        <div className="space-y-2">
+          <label className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
+            <input
+              type="checkbox"
+              checked={bestseller}
+              onChange={(e) => setBestseller(e.target.checked)}
+              className="w-4 h-4 accent-emerald-600"
+            />
+            Bestsellers only
+          </label>
+          <label className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
+            <input
+              type="checkbox"
+              checked={sellingFast}
+              onChange={(e) => setSellingFast(e.target.checked)}
+              className="w-4 h-4 accent-emerald-600"
+            />
+            Selling fast
+          </label>
+        </div>
       </div>
 
       {/* Price */}

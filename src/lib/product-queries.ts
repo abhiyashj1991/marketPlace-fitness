@@ -1,6 +1,7 @@
 import type { Prisma } from "@/generated/prisma/client";
 
 export type ProductSearchParams = {
+  category?: string; // comma-separated category keys (e.g. "WHEY_PROTEIN,CREATINE")
   brand?: string;
   minPrice?: string;
   maxPrice?: string;
@@ -10,14 +11,28 @@ export type ProductSearchParams = {
   sort?: string;
 };
 
+/**
+ * Build a Prisma where clause from URL search params.
+ *
+ * @param params  Parsed search params from the request URL.
+ * @param fixedCategoryKey  Optional. When set (e.g. on /products/category/[slug])
+ *                          this overrides any user-supplied `category` param.
+ */
 export function buildProductWhere(
   params: ProductSearchParams,
-  categoryKey?: string
+  fixedCategoryKey?: string
 ): Prisma.ProductWhereInput {
   const where: Prisma.ProductWhereInput = {};
 
-  if (categoryKey) {
-    where.category = categoryKey;
+  if (fixedCategoryKey) {
+    where.category = fixedCategoryKey;
+  } else if (params.category) {
+    const cats = params.category.split(",").filter(Boolean);
+    if (cats.length === 1) {
+      where.category = cats[0];
+    } else if (cats.length > 1) {
+      where.category = { in: cats };
+    }
   }
 
   if (params.brand) {
