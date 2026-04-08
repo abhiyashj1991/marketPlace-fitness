@@ -31,9 +31,9 @@ export default function AdminLayout({
   return (
     <div className="bg-slate-50 min-h-[calc(100vh-150px)]">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 mb-6 text-xs text-amber-900">
-          ⚠️ Admin section is unauthenticated for development. Add auth before
-          production.
+        <div className="bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-2 mb-6 text-xs text-emerald-900">
+          Admin portal — protected by HTTP Basic Auth via middleware. Sign out
+          by closing your browser.
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <aside className="lg:col-span-3">
