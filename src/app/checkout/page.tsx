@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Check, X, Loader2, QrCode } from "lucide-react";
 import { useCart, cartSubtotal } from "@/lib/cart-store";
 import { formatPriceINR, cn } from "@/lib/utils";
+import { isValidPhone, isValidPincode } from "@/lib/validation";
 
 type TrainerValidation =
   | { state: "idle" }
@@ -14,11 +15,21 @@ type TrainerValidation =
   | { state: "invalid"; message: string };
 
 export default function CheckoutPage() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const router = useRouter();
   const items = useCart((s) => s.items);
   const clearCart = useCart((s) => s.clear);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<{
+    customerName?: string;
+    customerPhone?: string;
+    addressLine?: string;
+    pincode?: string;
+    paymentRef?: string;
+  }>({});
 
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -37,6 +48,24 @@ export default function CheckoutPage() {
   const discountAmount =
     trainerStatus.state === "valid" ? Math.round(subtotal * 0.1) : 0;
   const total = subtotal - discountAmount;
+
+  // Skeleton until persisted cart hydrates
+  if (!mounted) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="h-9 w-32 bg-slate-200 rounded animate-pulse mb-6" />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-8 space-y-6">
+            <div className="bg-white border border-border rounded-2xl p-6 h-64 animate-pulse" />
+            <div className="bg-white border border-border rounded-2xl p-6 h-32 animate-pulse" />
+          </div>
+          <aside className="lg:col-span-4">
+            <div className="bg-white border border-border rounded-2xl p-6 h-80 animate-pulse" />
+          </aside>
+        </div>
+      </div>
+    );
+  }
 
   async function validateTrainerCode() {
     if (!trainerCode.trim()) {
@@ -66,22 +95,34 @@ export default function CheckoutPage() {
     }
   }
 
-  function placeOrder() {
-    setError(null);
-    if (
-      !customerName ||
-      !customerPhone ||
-      !addressLine ||
-      !pincode ||
-      items.length === 0
-    ) {
-      setError("Please fill in all required fields");
-      return;
+  function validateForm(): boolean {
+    const errs: typeof fieldErrors = {};
+    if (!customerName.trim() || customerName.trim().length < 2) {
+      errs.customerName = "Please enter your full name";
+    }
+    if (!isValidPhone(customerPhone)) {
+      errs.customerPhone = "Enter a valid 10-digit Indian mobile number";
+    }
+    if (!addressLine.trim() || addressLine.trim().length < 5) {
+      errs.addressLine = "Please enter a complete address";
+    }
+    if (!isValidPincode(pincode)) {
+      errs.pincode = "Enter a valid 6-digit PIN code";
     }
     if (paymentMethod === "UPI" && !paymentRef.trim()) {
-      setError("Please enter your UPI transaction / UTR reference");
+      errs.paymentRef = "Enter your UTR / transaction reference";
+    }
+    setFieldErrors(errs);
+    return Object.keys(errs).length === 0;
+  }
+
+  function placeOrder() {
+    setError(null);
+    if (items.length === 0) {
+      setError("Your cart is empty");
       return;
     }
+    if (!validateForm()) return;
 
     startTransition(async () => {
       try {
@@ -89,15 +130,15 @@ export default function CheckoutPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            customerName,
-            customerPhone,
-            addressLine,
+            customerName: customerName.trim(),
+            customerPhone: customerPhone.trim(),
+            addressLine: addressLine.trim(),
             city: "Indore",
-            pincode,
+            pincode: pincode.trim(),
             trainerCode:
               trainerStatus.state === "valid" ? trainerStatus.code : null,
             paymentMethod,
-            paymentRef: paymentMethod === "UPI" ? paymentRef : null,
+            paymentRef: paymentMethod === "UPI" ? paymentRef.trim() : null,
             items: items.map((i) => ({
               productId: i.productId,
               quantity: i.quantity,
@@ -146,25 +187,31 @@ export default function CheckoutPage() {
                 label="Full Name *"
                 value={customerName}
                 onChange={setCustomerName}
+                error={fieldErrors.customerName}
               />
               <Input
                 label="Phone *"
                 value={customerPhone}
-                onChange={setCustomerPhone}
+                onChange={(v) => setCustomerPhone(v.replace(/\D/g, "").slice(0, 10))}
                 type="tel"
+                placeholder="10-digit mobile"
+                error={fieldErrors.customerPhone}
               />
               <div className="md:col-span-2">
                 <Input
                   label="Address *"
                   value={addressLine}
                   onChange={setAddressLine}
+                  error={fieldErrors.addressLine}
                 />
               </div>
               <Input label="City" value="Indore" onChange={() => {}} disabled />
               <Input
                 label="Pincode *"
                 value={pincode}
-                onChange={setPincode}
+                onChange={(v) => setPincode(v.replace(/\D/g, "").slice(0, 6))}
+                placeholder="6 digits"
+                error={fieldErrors.pincode}
               />
             </div>
           </section>
@@ -257,6 +304,11 @@ export default function CheckoutPage() {
                     placeholder="e.g. 123456789012"
                     className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   />
+                  {fieldErrors.paymentRef && (
+                    <p className="text-xs text-destructive mt-1">
+                      {fieldErrors.paymentRef}
+                    </p>
+                  )}
                 </div>
               </div>
             )}
@@ -342,12 +394,16 @@ function Input({
   onChange,
   type = "text",
   disabled = false,
+  placeholder,
+  error,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   type?: string;
   disabled?: boolean;
+  placeholder?: string;
+  error?: string;
 }) {
   return (
     <div>
@@ -359,8 +415,13 @@ function Input({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-slate-50 disabled:text-muted-foreground"
+        placeholder={placeholder}
+        className={cn(
+          "w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-slate-50 disabled:text-muted-foreground",
+          error ? "border-destructive" : "border-border"
+        )}
       />
+      {error && <p className="text-xs text-destructive mt-1">{error}</p>}
     </div>
   );
 }

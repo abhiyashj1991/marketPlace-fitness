@@ -1,27 +1,45 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
+import { checkRequestOrigin } from "@/lib/security";
+import {
+  phoneSchema,
+  pincodeSchema,
+  ORDER_MAX_ITEMS,
+  ORDER_MAX_QTY_PER_ITEM,
+} from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
 
 const OrderItemSchema = z.object({
-  productId: z.string(),
-  quantity: z.number().int().positive(),
+  productId: z.string().min(1).max(64),
+  quantity: z
+    .number()
+    .int()
+    .positive()
+    .max(ORDER_MAX_QTY_PER_ITEM, `Maximum ${ORDER_MAX_QTY_PER_ITEM} per item`),
 });
 
 const CreateOrderSchema = z.object({
-  customerName: z.string().min(1),
-  customerPhone: z.string().min(7),
-  addressLine: z.string().min(1),
-  city: z.string().default("Indore"),
-  pincode: z.string().min(4),
-  trainerCode: z.string().optional().nullable(),
+  customerName: z.string().trim().min(2).max(100),
+  customerPhone: phoneSchema,
+  addressLine: z.string().trim().min(5).max(300),
+  city: z.string().trim().min(1).max(60).default("Indore"),
+  pincode: pincodeSchema,
+  trainerCode: z.string().trim().max(20).optional().nullable(),
   paymentMethod: z.enum(["CASH", "UPI"]),
-  paymentRef: z.string().optional().nullable(),
-  items: z.array(OrderItemSchema).min(1),
+  paymentRef: z.string().trim().max(60).optional().nullable(),
+  items: z
+    .array(OrderItemSchema)
+    .min(1, "Cart is empty")
+    .max(ORDER_MAX_ITEMS, `Maximum ${ORDER_MAX_ITEMS} items per order`),
 });
 
 export async function POST(req: Request) {
+  if (!checkRequestOrigin(req)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   let payload;
   try {
     payload = await req.json();
@@ -31,14 +49,13 @@ export async function POST(req: Request) {
 
   const parsed = CreateOrderSchema.safeParse(payload);
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Validation failed", details: parsed.error.flatten() },
-      { status: 400 }
-    );
+    // Surface a single user-friendly message instead of leaking the schema.
+    const firstIssue = parsed.error.issues[0];
+    const message = firstIssue?.message ?? "Invalid input";
+    return NextResponse.json({ error: message }, { status: 400 });
   }
   const data = parsed.data;
 
-  // Validate UPI requires payment ref
   if (data.paymentMethod === "UPI" && !data.paymentRef) {
     return NextResponse.json(
       { error: "UTR / payment reference required for UPI orders" },
@@ -46,7 +63,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // Load products to validate stock and snapshot prices
+  // Load products to validate stock and snapshot prices.
   const productIds = data.items.map((i) => i.productId);
   const products = await prisma.product.findMany({
     where: { id: { in: productIds } },
@@ -58,7 +75,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // Stock check
+  // Stock check before any DB writes.
   for (const item of data.items) {
     const product = products.find((p) => p.id === item.productId)!;
     if (product.stock < item.quantity) {
@@ -71,7 +88,7 @@ export async function POST(req: Request) {
     }
   }
 
-  // Compute totals
+  // Compute totals from server-side prices (never trust client prices).
   let subtotal = 0;
   const orderItems = data.items.map((item) => {
     const product = products.find((p) => p.id === item.productId)!;
@@ -85,7 +102,8 @@ export async function POST(req: Request) {
     };
   });
 
-  // Validate trainer code (if provided)
+  // Validate trainer code (optional). Invalid codes are silently ignored
+  // (no discount), so a typo doesn't block the order.
   let validatedTrainerCode: string | null = null;
   let discountAmount = 0;
   if (data.trainerCode) {
@@ -99,7 +117,7 @@ export async function POST(req: Request) {
   }
   const total = subtotal - discountAmount;
 
-  // Create order + decrement stock atomically
+  // Atomic create + decrement stock.
   const order = await prisma.$transaction(async (tx) => {
     const created = await tx.order.create({
       data: {

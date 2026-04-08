@@ -1,12 +1,16 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 import { useCart, cartCount } from "@/lib/cart-store";
 
 export function HeaderCartLink() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const items = useCart((s) => s.items);
-  const count = cartCount(items);
+  const count = mounted ? cartCount(items) : 0;
 
   return (
     <Link

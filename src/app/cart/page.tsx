@@ -1,15 +1,49 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Trash2, Minus, Plus, ShoppingBag, ArrowRight } from "lucide-react";
 import { useCart, cartSubtotal } from "@/lib/cart-store";
 import { formatPriceINR } from "@/lib/utils";
 
 export default function CartPage() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const items = useCart((s) => s.items);
   const updateQuantity = useCart((s) => s.updateQuantity);
   const removeItem = useCart((s) => s.removeItem);
   const subtotal = cartSubtotal(items);
+
+  // Skeleton until the persisted store is hydrated on the client. Avoids
+  // flashing "Your cart is empty" for users who actually have items.
+  if (!mounted) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="h-9 w-40 bg-slate-200 rounded animate-pulse mb-6" />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-8 space-y-4">
+            {[0, 1].map((i) => (
+              <div
+                key={i}
+                className="bg-white border border-border rounded-xl p-4 flex gap-4"
+              >
+                <div className="w-20 h-20 bg-slate-100 rounded-lg animate-pulse" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-3 w-20 bg-slate-100 rounded animate-pulse" />
+                  <div className="h-4 w-2/3 bg-slate-100 rounded animate-pulse" />
+                  <div className="h-4 w-24 bg-slate-100 rounded animate-pulse" />
+                </div>
+              </div>
+            ))}
+          </div>
+          <aside className="lg:col-span-4">
+            <div className="bg-white border border-border rounded-2xl p-6 h-64 animate-pulse" />
+          </aside>
+        </div>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (

@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
+import { checkRequestOrigin } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
 
 const NewTrainerSchema = z.object({
-  name: z.string().min(1),
-  phone: z.string().optional().nullable(),
-  email: z.string().optional().nullable(),
+  name: z.string().trim().min(1).max(100),
+  phone: z.string().trim().max(20).optional().nullable(),
+  email: z.string().trim().email().max(120).optional().nullable().or(z.literal("")),
 });
 
 function generateTrainerCode(): string {
@@ -20,18 +21,27 @@ function generateTrainerCode(): string {
 }
 
 export async function POST(req: Request) {
+  if (!checkRequestOrigin(req)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   let payload;
   try {
     payload = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
+
   const parsed = NewTrainerSchema.safeParse(payload);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Validation failed" }, { status: 400 });
+    const firstIssue = parsed.error.issues[0];
+    return NextResponse.json(
+      { error: firstIssue?.message ?? "Validation failed" },
+      { status: 400 }
+    );
   }
 
-  // Retry on collision (very unlikely with 32^6 space)
+  // Retry on collision (very unlikely with 32^6 ≈ 1B space).
   let trainer;
   for (let attempt = 0; attempt < 5; attempt++) {
     const code = generateTrainerCode();
