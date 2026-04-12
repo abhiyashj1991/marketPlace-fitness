@@ -2,9 +2,10 @@ import type { Prisma } from "@/generated/prisma/client";
 import { PRICE_TIERS } from "@/lib/price-tiers";
 
 export type ProductSearchParams = {
-  category?: string; // comma-separated category keys (e.g. "WHEY_PROTEIN,CREATINE")
+  q?: string; // free-text search across product name + brand name
+  category?: string; // comma-separated category keys
   brand?: string;
-  priceTier?: string; // comma-separated price tier keys (e.g. "PREMIUM,MID")
+  priceTier?: string; // comma-separated price tier keys
   minPrice?: string;
   maxPrice?: string;
   rating?: string;
@@ -13,18 +14,12 @@ export type ProductSearchParams = {
   sort?: string;
 };
 
-/**
- * Build a Prisma where clause from URL search params.
- *
- * @param params  Parsed search params from the request URL.
- * @param fixedCategoryKey  Optional. When set (e.g. on /products/category/[slug])
- *                          this overrides any user-supplied `category` param.
- */
 export function buildProductWhere(
   params: ProductSearchParams,
   fixedCategoryKey?: string
 ): Prisma.ProductWhereInput {
   const where: Prisma.ProductWhereInput = {};
+  const andClauses: Prisma.ProductWhereInput[] = [];
 
   if (fixedCategoryKey) {
     where.category = fixedCategoryKey;
@@ -44,8 +39,7 @@ export function buildProductWhere(
     }
   }
 
-  // Price tier filter (multi-select). Each selected tier becomes one OR'd
-  // priceSale range; tiers are then AND'd with manual min/max if both are set.
+  // Price tier: each selected tier becomes one OR'd priceSale range
   if (params.priceTier) {
     const tierKeys = params.priceTier.split(",").filter(Boolean);
     const tiers = tierKeys
@@ -53,12 +47,27 @@ export function buildProductWhere(
       .filter((t): t is (typeof PRICE_TIERS)[number] => Boolean(t));
 
     if (tiers.length > 0) {
-      where.OR = tiers.map((t) => ({
-        priceSale:
-          t.max >= Number.MAX_SAFE_INTEGER
-            ? { gte: t.min }
-            : { gte: t.min, lte: t.max },
-      }));
+      andClauses.push({
+        OR: tiers.map((t) => ({
+          priceSale:
+            t.max >= Number.MAX_SAFE_INTEGER
+              ? { gte: t.min }
+              : { gte: t.min, lte: t.max },
+        })),
+      });
+    }
+  }
+
+  // Free-text search: matches product name OR brand name (case-insensitive)
+  if (params.q) {
+    const q = params.q.trim();
+    if (q) {
+      andClauses.push({
+        OR: [
+          { name: { contains: q, mode: "insensitive" } },
+          { brand: { name: { contains: q, mode: "insensitive" } } },
+        ],
+      });
     }
   }
 
@@ -85,6 +94,10 @@ export function buildProductWhere(
 
   if (params.sellingFast === "1") {
     where.isSellingFast = true;
+  }
+
+  if (andClauses.length > 0) {
+    where.AND = andClauses;
   }
 
   return where;

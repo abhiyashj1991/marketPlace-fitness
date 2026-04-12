@@ -1,8 +1,10 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductFilters } from "@/components/ProductFilters";
 import { SortSelect } from "@/components/SortSelect";
+import { MobileFilterDrawer } from "@/components/MobileFilterDrawer";
 import {
   buildProductWhere,
   buildProductOrderBy,
@@ -71,14 +73,15 @@ export default async function CategoryPage({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <aside className="lg:col-span-3">
+        <aside className="hidden lg:block lg:col-span-3">
           <div className="bg-white border border-border rounded-2xl p-5 sticky top-24">
             <ProductFilters brands={brands.map((b) => b.name)} />
           </div>
         </aside>
 
         <div className="lg:col-span-9">
-          <div className="flex items-center justify-end mb-4">
+          <div className="flex items-center justify-between gap-2 mb-4">
+            <MobileFilterDrawer brands={brands.map((b) => b.name)} />
             <SortSelect />
           </div>
 
@@ -87,6 +90,12 @@ export default async function CategoryPage({
               <p className="text-muted-foreground">
                 No products match your filters.
               </p>
+              <Link
+                href={`/products/category/${slug}`}
+                className="inline-block mt-4 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+              >
+                Clear filters
+              </Link>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">

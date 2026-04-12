@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 import { HeaderCartLink } from "@/components/HeaderCartLink";
+import { SearchBar } from "@/components/SearchBar";
+import { MobileNav } from "@/components/MobileNav";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-border shadow-sm">
+    <header className="sticky top-0 z-40 bg-white border-b border-border shadow-sm">
       {/* Top strip with Indore location pin */}
       <div className="bg-emerald-50 border-b border-emerald-100">
         <div className="max-w-7xl mx-auto px-4 py-1.5 text-xs text-emerald-900 flex items-center gap-1.5">
@@ -15,16 +17,24 @@ export function Header() {
         </div>
       </div>
       {/* Main nav */}
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-1.5">
+      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center gap-4">
+        <MobileNav />
+
+        <Link href="/" className="flex items-center gap-1.5 flex-shrink-0">
           <span className="text-xl sm:text-2xl font-bold text-emerald-700">
             Marketplace
           </span>
-          <span className="text-xl sm:text-2xl font-bold text-foreground">
+          <span className="text-xl sm:text-2xl font-bold text-foreground hidden sm:inline">
             Fitness
           </span>
         </Link>
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
+
+        {/* Search — visible on md+ screens */}
+        <div className="hidden md:flex flex-1 max-w-xl">
+          <SearchBar />
+        </div>
+
+        <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
           <Link
             href="/"
             className="text-foreground hover:text-emerald-700 transition-colors"
@@ -41,10 +51,13 @@ export function Header() {
             href="/about"
             className="text-foreground hover:text-emerald-700 transition-colors"
           >
-            About Us
+            About
           </Link>
         </nav>
-        <HeaderCartLink />
+
+        <div className="ml-auto md:ml-0">
+          <HeaderCartLink />
+        </div>
       </div>
     </header>
   );

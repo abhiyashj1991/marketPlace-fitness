@@ -6,6 +6,7 @@ import { prisma } from "@/lib/db";
 import { categoryLabel, categorySlug, productImageUrl } from "@/lib/categories";
 import { formatPriceINR, discountPercent } from "@/lib/utils";
 import { AddToCartButton } from "@/components/AddToCartButton";
+import { RelatedProducts } from "@/components/RelatedProducts";
 
 export const dynamic = "force-dynamic";
 
@@ -222,6 +223,12 @@ export default async function ProductDetailPage({
           </div>
         </div>
       </div>
+
+      {/* Related products */}
+      <RelatedProducts
+        categoryKey={product.category}
+        excludeProductId={product.id}
+      />
 
       {/* Reviews */}
       {product.reviews.length > 0 && (

@@ -7,6 +7,7 @@ import { Check, X, Loader2, QrCode } from "lucide-react";
 import { useCart, cartSubtotal } from "@/lib/cart-store";
 import { formatPriceINR, cn } from "@/lib/utils";
 import { isValidPhone, isValidPincode } from "@/lib/validation";
+import { TRAINER_REF_STORAGE_KEY } from "@/components/TrainerRefBanner";
 
 type TrainerValidation =
   | { state: "idle" }
@@ -17,6 +18,28 @@ type TrainerValidation =
 export default function CheckoutPage() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+
+  // Pre-fill trainer code from a referral link (?ref=TRN-XXXXXX), stored
+  // in localStorage by TrainerRefBanner. Auto-validates on mount so the
+  // discount shows immediately without the user clicking Apply.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = localStorage.getItem(TRAINER_REF_STORAGE_KEY);
+      if (!raw) return;
+      const stored = JSON.parse(raw) as { code: string; name: string };
+      if (stored.code) {
+        setTrainerCode(stored.code);
+        setTrainerStatus({
+          state: "valid",
+          trainerName: stored.name,
+          code: stored.code,
+        });
+      }
+    } catch {
+      // ignore corrupt localStorage entry
+    }
+  }, []);
 
   const router = useRouter();
   const items = useCart((s) => s.items);

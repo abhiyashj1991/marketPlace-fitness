@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductFilters } from "@/components/ProductFilters";
 import { SortSelect } from "@/components/SortSelect";
+import { MobileFilterDrawer } from "@/components/MobileFilterDrawer";
 import {
   buildProductWhere,
   buildProductOrderBy,
@@ -35,17 +37,32 @@ export default async function ProductsPage({
     prisma.brand.findMany({ orderBy: { name: "asc" } }),
   ]);
 
+  const isSearch = Boolean(params.q?.trim());
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-foreground">All Products</h1>
-        <p className="text-muted-foreground mt-1">
-          {products.length} {products.length === 1 ? "product" : "products"}
-        </p>
+        {isSearch ? (
+          <>
+            <h1 className="text-3xl font-bold text-foreground">
+              Search results for &ldquo;{params.q}&rdquo;
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              {products.length} {products.length === 1 ? "match" : "matches"}
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className="text-3xl font-bold text-foreground">All Products</h1>
+            <p className="text-muted-foreground mt-1">
+              {products.length} {products.length === 1 ? "product" : "products"}
+            </p>
+          </>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <aside className="lg:col-span-3">
+        <aside className="hidden lg:block lg:col-span-3">
           <div className="bg-white border border-border rounded-2xl p-5 sticky top-24">
             <ProductFilters
               brands={brands.map((b) => b.name)}
@@ -55,7 +72,11 @@ export default async function ProductsPage({
         </aside>
 
         <div className="lg:col-span-9">
-          <div className="flex items-center justify-end mb-4">
+          <div className="flex items-center justify-between gap-2 mb-4">
+            <MobileFilterDrawer
+              brands={brands.map((b) => b.name)}
+              showCategoryFilter
+            />
             <SortSelect />
           </div>
 
@@ -64,6 +85,12 @@ export default async function ProductsPage({
               <p className="text-muted-foreground">
                 No products match your filters.
               </p>
+              <Link
+                href="/products"
+                className="inline-block mt-4 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+              >
+                Clear filters
+              </Link>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
