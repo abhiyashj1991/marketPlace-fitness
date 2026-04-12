@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { Plus, Pencil } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { categoryLabel } from "@/lib/categories";
 import { formatPriceINR } from "@/lib/utils";
@@ -7,12 +9,26 @@ export const dynamic = "force-dynamic";
 export default async function AdminProductsPage() {
   const products = await prisma.product.findMany({
     include: { brand: true },
-    orderBy: { name: "asc" },
+    orderBy: { createdAt: "desc" },
   });
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-foreground mb-6">Products</h1>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Products</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {products.length} in catalog
+          </p>
+        </div>
+        <Link
+          href="/admin/products/new"
+          className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-lg text-sm"
+        >
+          <Plus className="w-4 h-4" />
+          Add Product
+        </Link>
+      </div>
 
       <div className="bg-white border border-border rounded-2xl overflow-hidden">
         <table className="w-full text-sm">
@@ -28,6 +44,7 @@ export default async function AdminProductsPage() {
                 Stock
               </th>
               <th className="px-4 py-3 font-semibold text-foreground">Tags</th>
+              <th className="px-4 py-3 font-semibold text-foreground"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -83,6 +100,15 @@ export default async function AdminProductsPage() {
                       </span>
                     )}
                   </div>
+                </td>
+                <td className="px-4 py-3 text-right">
+                  <Link
+                    href={`/admin/products/${p.id}/edit`}
+                    className="inline-flex items-center gap-1 text-emerald-700 hover:text-emerald-800 font-semibold text-xs"
+                  >
+                    <Pencil className="w-3 h-3" />
+                    Edit
+                  </Link>
                 </td>
               </tr>
             ))}
