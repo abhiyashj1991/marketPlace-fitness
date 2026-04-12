@@ -1,8 +1,10 @@
 import type { Prisma } from "@/generated/prisma/client";
+import { PRICE_TIERS } from "@/lib/price-tiers";
 
 export type ProductSearchParams = {
   category?: string; // comma-separated category keys (e.g. "WHEY_PROTEIN,CREATINE")
   brand?: string;
+  priceTier?: string; // comma-separated price tier keys (e.g. "PREMIUM,MID")
   minPrice?: string;
   maxPrice?: string;
   rating?: string;
@@ -39,6 +41,24 @@ export function buildProductWhere(
     const brandNames = params.brand.split(",").filter(Boolean);
     if (brandNames.length > 0) {
       where.brand = { name: { in: brandNames } };
+    }
+  }
+
+  // Price tier filter (multi-select). Each selected tier becomes one OR'd
+  // priceSale range; tiers are then AND'd with manual min/max if both are set.
+  if (params.priceTier) {
+    const tierKeys = params.priceTier.split(",").filter(Boolean);
+    const tiers = tierKeys
+      .map((k) => PRICE_TIERS.find((t) => t.key === k))
+      .filter((t): t is (typeof PRICE_TIERS)[number] => Boolean(t));
+
+    if (tiers.length > 0) {
+      where.OR = tiers.map((t) => ({
+        priceSale:
+          t.max >= Number.MAX_SAFE_INTEGER
+            ? { gte: t.min }
+            : { gte: t.min, lte: t.max },
+      }));
     }
   }
 

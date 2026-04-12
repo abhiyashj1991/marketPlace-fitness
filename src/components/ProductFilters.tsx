@@ -5,6 +5,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Star, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CATEGORIES } from "@/lib/categories";
+import { PRICE_TIERS } from "@/lib/price-tiers";
 
 type Props = {
   brands: string[];
@@ -20,6 +21,9 @@ export function ProductFilters({ brands, showCategoryFilter = false }: Props) {
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
     params.get("category")?.split(",").filter(Boolean) ?? []
+  );
+  const [selectedTiers, setSelectedTiers] = useState<string[]>(
+    params.get("priceTier")?.split(",").filter(Boolean) ?? []
   );
   const [selectedBrands, setSelectedBrands] = useState<string[]>(
     params.get("brand")?.split(",").filter(Boolean) ?? []
@@ -40,6 +44,12 @@ export function ProductFilters({ brands, showCategoryFilter = false }: Props) {
     );
   }
 
+  function toggleTier(key: string) {
+    setSelectedTiers((prev) =>
+      prev.includes(key) ? prev.filter((t) => t !== key) : [...prev, key]
+    );
+  }
+
   function toggleBrand(name: string) {
     setSelectedBrands((prev) =>
       prev.includes(name) ? prev.filter((b) => b !== name) : [...prev, name]
@@ -53,6 +63,7 @@ export function ProductFilters({ brands, showCategoryFilter = false }: Props) {
     if (showCategoryFilter && selectedCategories.length) {
       next.set("category", selectedCategories.join(","));
     }
+    if (selectedTiers.length) next.set("priceTier", selectedTiers.join(","));
     if (selectedBrands.length) next.set("brand", selectedBrands.join(","));
     if (minPrice) next.set("minPrice", minPrice);
     if (maxPrice) next.set("maxPrice", maxPrice);
@@ -66,6 +77,7 @@ export function ProductFilters({ brands, showCategoryFilter = false }: Props) {
 
   function reset() {
     setSelectedCategories([]);
+    setSelectedTiers([]);
     setSelectedBrands([]);
     setMinPrice("");
     setMaxPrice("");
@@ -79,6 +91,7 @@ export function ProductFilters({ brands, showCategoryFilter = false }: Props) {
 
   const hasActive =
     selectedCategories.length > 0 ||
+    selectedTiers.length > 0 ||
     selectedBrands.length > 0 ||
     minPrice ||
     maxPrice ||
@@ -126,6 +139,32 @@ export function ProductFilters({ brands, showCategoryFilter = false }: Props) {
         </div>
       )}
 
+      {/* Range (price tier) */}
+      <div>
+        <h3 className="text-sm font-semibold text-foreground mb-3">Range</h3>
+        <div className="space-y-2">
+          {PRICE_TIERS.map((t) => (
+            <label
+              key={t.key}
+              className="flex items-start gap-2 text-sm text-foreground cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                checked={selectedTiers.includes(t.key)}
+                onChange={() => toggleTier(t.key)}
+                className="w-4 h-4 accent-emerald-600 mt-0.5"
+              />
+              <div className="leading-tight">
+                <div>{t.label}</div>
+                <div className="text-xs text-muted-foreground">
+                  {t.description}
+                </div>
+              </div>
+            </label>
+          ))}
+        </div>
+      </div>
+
       {/* Quick toggles */}
       <div>
         <h3 className="text-sm font-semibold text-foreground mb-3">
@@ -153,10 +192,10 @@ export function ProductFilters({ brands, showCategoryFilter = false }: Props) {
         </div>
       </div>
 
-      {/* Price */}
+      {/* Custom price */}
       <div>
         <h3 className="text-sm font-semibold text-foreground mb-3">
-          Price (₹)
+          Custom Price (₹)
         </h3>
         <div className="flex items-center gap-2">
           <input
