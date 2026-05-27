@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Marketplace Fitness are documented here.
+All notable changes to Erodnix are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
@@ -84,7 +84,7 @@ Live at https://fitnessmarketplace.vercel.app
   `useSearchParams` — this keeps every static page from being forced
   into dynamic rendering.
 - Trainer referral state is stored under the localStorage key
-  `marketplace-fitness-trainer-ref`. Dismissing the banner clears it.
+  `erodnix-trainer-ref`. Dismissing the banner clears it.
 - Inactive trainers' codes still pass through `/api/orders`, but no
   discount is applied (silent drop, same UX as a typo). Order placement
   is never blocked by trainer state.

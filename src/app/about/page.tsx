@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Dumbbell, ShieldCheck, Users, ArrowRight } from "lucide-react";
 
 export const metadata = {
-  title: "About Us — Marketplace Fitness",
+  title: "About Us — Erodnix",
   description:
     "We are gym trainers selling supplements we actually use ourselves. Honest recommendations, authentic products, delivered locally in Indore.",
 };
@@ -22,7 +22,7 @@ export default function AboutPage() {
             <span className="text-emerald-600">actually use</span>.
           </h1>
           <p className="mt-5 text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Marketplace Fitness is run by working gym trainers in Indore. Every
+            Erodnix is run by working gym trainers in Indore. Every
             product on this site is one we use in our own training and
             recommend to our clients — based on results, not commission.
           </p>
@@ -45,7 +45,7 @@ export default function AboutPage() {
             Honest recommendations from your trainer
           </h2>
           <p className="text-muted-foreground leading-relaxed">
-            We started Marketplace Fitness because we got tired of seeing our
+            We started Erodnix because we got tired of seeing our
             clients waste money on counterfeit supplements and overpriced
             products that don&apos;t deliver. As trainers, we&apos;re in the
             gym every day — we know what works, what doesn&apos;t, and what

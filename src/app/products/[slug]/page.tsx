@@ -20,9 +20,9 @@ export async function generateMetadata({
     where: { slug },
     include: { brand: true },
   });
-  if (!product) return { title: "Product — Marketplace Fitness" };
+  if (!product) return { title: "Product — Erodnix" };
   return {
-    title: `${product.name} — Marketplace Fitness`,
+    title: `${product.name} — Erodnix`,
     description: product.description,
   };
 }

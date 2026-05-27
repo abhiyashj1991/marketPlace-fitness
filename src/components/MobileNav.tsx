@@ -27,7 +27,7 @@ export function MobileNav() {
           />
           <div className="absolute inset-y-0 left-0 w-72 max-w-[85vw] bg-white shadow-xl flex flex-col">
             <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-              <span className="font-bold text-emerald-700">Marketplace Fitness</span>
+              <span className="font-bold text-emerald-700">Erodnix</span>
               <button
                 onClick={() => setOpen(false)}
                 aria-label="Close menu"

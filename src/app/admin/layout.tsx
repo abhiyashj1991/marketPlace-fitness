@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 
 export const metadata = {
-  title: "Admin — Marketplace Fitness",
+  title: "Admin — Erodnix",
 };
 
 const NAV = [

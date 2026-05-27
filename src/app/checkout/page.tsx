@@ -305,7 +305,7 @@ export default function CheckoutPage() {
                   </div>
                   <div className="text-sm">
                     <div className="font-semibold text-foreground">
-                      Pay to: marketplacefitness@upi
+                      Pay to: erodnix@upi
                     </div>
                     <div className="text-muted-foreground mt-1">
                       Amount: <strong>{formatPriceINR(total)}</strong>

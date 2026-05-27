@@ -1,4 +1,4 @@
-// Marketplace Fitness — Prisma schema (Postgres)
+// Erodnix — Prisma schema (Postgres)
 // DATABASE_URL is configured in prisma.config.ts (read from .env / Vercel env).
 
 generator client {

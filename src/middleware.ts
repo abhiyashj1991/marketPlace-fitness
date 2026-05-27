@@ -28,7 +28,7 @@ function unauthorized(): NextResponse {
     status: 401,
     headers: {
       "WWW-Authenticate":
-        'Basic realm="Marketplace Fitness Admin", charset="UTF-8"',
+        'Basic realm="Erodnix Admin", charset="UTF-8"',
     },
   });
 }

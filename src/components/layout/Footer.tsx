@@ -48,7 +48,7 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <h3 className="text-white font-bold text-lg mb-3">
-              Marketplace Fitness
+              Erodnix
             </h3>
             <p className="text-sm text-slate-400 leading-relaxed">
               Trainer-recommended supplements, 100% authentic, delivered
@@ -141,7 +141,7 @@ export function Footer() {
         </div>
         <div className="border-t border-slate-800">
           <div className="max-w-7xl mx-auto px-4 py-4 text-center text-xs text-slate-500">
-            © {new Date().getFullYear()} Marketplace Fitness. All rights reserved.
+            © {new Date().getFullYear()} Erodnix. All rights reserved.
           </div>
         </div>
       </div>

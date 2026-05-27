@@ -13,7 +13,7 @@ import {
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "All Products — Marketplace Fitness",
+  title: "All Products — Erodnix",
   description:
     "Browse trainer-recommended whey protein, creatine, fat burners, mass gainers and multivitamins.",
 };

@@ -20,12 +20,9 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center gap-4">
         <MobileNav />
 
-        <Link href="/" className="flex items-center gap-1.5 flex-shrink-0">
-          <span className="text-xl sm:text-2xl font-bold text-emerald-700">
-            Marketplace
-          </span>
-          <span className="text-xl sm:text-2xl font-bold text-foreground hidden sm:inline">
-            Fitness
+        <Link href="/" className="flex items-center flex-shrink-0">
+          <span className="text-xl sm:text-2xl font-bold text-emerald-700 tracking-tight">
+            Erodnix
           </span>
         </Link>
 

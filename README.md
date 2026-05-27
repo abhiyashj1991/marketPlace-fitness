@@ -1,4 +1,4 @@
-# Marketplace Fitness
+# Erodnix
 
 A trainer-curated supplement e-commerce site for gym-goers in **Indore**. Built so a working gym trainer can sell authentic supplements they actually use, give clients a personal discount via a unique trainer code, and track which trainer drove which sale from a simple admin panel.
 

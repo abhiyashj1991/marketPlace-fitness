@@ -59,7 +59,7 @@ export const useCart = create<CartState>()(
       clear: () => set({ items: [] }),
     }),
     {
-      name: "marketplace-fitness-cart",
+      name: "erodnix-cart",
       storage: createJSONStorage(() => localStorage),
       skipHydration: true,
     }

@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Marketplace Fitness — Authentic Supplements in Indore",
+  title: "Erodnix — Authentic Supplements in Indore",
   description:
     "Trainer-recommended whey protein, creatine, fat burners, mass gainers and multivitamins. 100% authentic, delivered locally in Indore.",
 };

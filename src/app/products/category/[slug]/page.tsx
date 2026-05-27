@@ -21,9 +21,9 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const cat = CATEGORIES.find((c) => c.slug === slug);
-  if (!cat) return { title: "Category — Marketplace Fitness" };
+  if (!cat) return { title: "Category — Erodnix" };
   return {
-    title: `${cat.label} — Marketplace Fitness`,
+    title: `${cat.label} — Erodnix`,
     description: `Shop authentic ${cat.label.toLowerCase()} from trainer-vetted brands. ${cat.description}.`,
   };
 }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Award, X } from "lucide-react";
 
-const STORAGE_KEY = "marketplace-fitness-trainer-ref";
+const STORAGE_KEY = "erodnix-trainer-ref";
 
 type TrainerInfo = { code: string; name: string };
 
