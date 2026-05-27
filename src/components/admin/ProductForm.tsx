@@ -1,9 +1,14 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
+import { Upload, X as XIcon } from "lucide-react";
 import { CATEGORIES } from "@/lib/categories";
 import { cn } from "@/lib/utils";
+
+// Cap a single uploaded file at ~5MB. Anything bigger and the base64
+// representation in the DB starts to hurt query performance.
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 
 export type ProductFormInitial = {
   id?: string;
@@ -182,12 +187,11 @@ export function ProductForm({ initial, brandSuggestions }: Props) {
           type="number"
         />
         <Field label="Stock" value={stock} onChange={setStock} type="number" />
-        <Field
-          label="Image URL (auto-generated placeholder if blank)"
-          value={imageUrl}
-          onChange={setImageUrl}
-          placeholder="https://..."
-        />
+      </div>
+
+      <div>
+        <Label>Product Image</Label>
+        <ImagePicker value={imageUrl} onChange={setImageUrl} />
       </div>
 
       <div>
@@ -296,6 +300,109 @@ export function ProductForm({ initial, brandSuggestions }: Props) {
           Cancel
         </button>
       </div>
+    </div>
+  );
+}
+
+function ImagePicker({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadError(null);
+
+    if (!file.type.startsWith("image/")) {
+      setUploadError("Please choose an image file (jpg, png, webp, etc.)");
+      return;
+    }
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setUploadError(
+        `Image is ${(file.size / 1024 / 1024).toFixed(1)}MB. Please use under ${MAX_UPLOAD_BYTES / 1024 / 1024}MB.`
+      );
+      return;
+    }
+
+    setUploading(true);
+    const reader = new FileReader();
+    reader.onload = () => {
+      onChange(reader.result as string);
+      setUploading(false);
+    };
+    reader.onerror = () => {
+      setUploadError("Failed to read the file");
+      setUploading(false);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  return (
+    <div className="space-y-3">
+      {/* Preview */}
+      {value && (
+        <div className="relative inline-block">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={value}
+            alt="Product preview"
+            className="w-32 h-32 object-cover rounded-lg border border-border bg-slate-50"
+          />
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            className="absolute -top-2 -right-2 bg-white border border-border rounded-full p-1 shadow hover:bg-red-50 hover:border-red-300"
+            aria-label="Remove image"
+          >
+            <XIcon className="w-3 h-3 text-foreground" />
+          </button>
+        </div>
+      )}
+
+      {/* Upload from device */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+        <label
+          className={cn(
+            "inline-flex items-center gap-2 px-3 py-2 border border-dashed border-border rounded-lg cursor-pointer hover:bg-slate-50 text-sm font-semibold text-foreground",
+            uploading && "opacity-50"
+          )}
+        >
+          <Upload className="w-4 h-4" />
+          {uploading ? "Reading file…" : value ? "Replace from device" : "Upload from device"}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            disabled={uploading}
+            className="hidden"
+          />
+        </label>
+        <span className="text-xs text-muted-foreground">or</span>
+      </div>
+
+      {/* Paste URL */}
+      <div>
+        <input
+          type="text"
+          value={value.startsWith("data:") ? "" : value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Paste image URL from the internet (https://...)"
+          className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono"
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          Leave the field blank to auto-generate a placeholder image based on the product category.
+        </p>
+      </div>
+
+      {uploadError && (
+        <p className="text-xs text-destructive">{uploadError}</p>
+      )}
     </div>
   );
 }

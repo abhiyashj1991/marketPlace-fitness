@@ -17,7 +17,9 @@ const PatchProductSchema = z
     priceSale: z.coerce.number().int().positive().max(1_000_000).optional(),
     stock: z.coerce.number().int().nonnegative().max(100_000).optional(),
     description: z.string().trim().min(10).max(2_000).optional(),
-    imageUrl: z.string().trim().url().max(2_000).optional().or(z.literal("")),
+    // imageUrl can be a long https URL or a data: URL (base64 upload). See
+    // POST /api/admin/products for rationale on the 10M cap.
+    imageUrl: z.string().trim().max(10_000_000).optional().or(z.literal("")),
     isBestseller: z.coerce.boolean().optional(),
     isSellingFast: z.coerce.boolean().optional(),
     rating: z.coerce.number().min(0).max(5).optional(),

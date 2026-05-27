@@ -23,7 +23,12 @@ const NewProductSchema = z.object({
   priceSale: z.coerce.number().int().positive().max(1_000_000),
   stock: z.coerce.number().int().nonnegative().max(100_000),
   description: z.string().trim().min(10).max(2_000),
-  imageUrl: z.string().trim().url().max(2_000).optional().or(z.literal("")),
+  // imageUrl can be:
+  //   - an https URL (potentially very long, e.g. Amazon CDN URLs)
+  //   - a data: URL containing an inline base64-encoded image (for uploads
+  //     from the admin form). A 5MB image is ~7M chars as base64, so we
+  //     leave headroom and cap at 10M.
+  imageUrl: z.string().trim().max(10_000_000).optional().or(z.literal("")),
   isBestseller: z.coerce.boolean().optional(),
   isSellingFast: z.coerce.boolean().optional(),
   rating: z.coerce.number().min(0).max(5).optional(),
