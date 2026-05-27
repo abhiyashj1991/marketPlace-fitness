@@ -11,6 +11,16 @@ const ALLOWED_CATEGORIES = CATEGORIES.map((c) => c.key) as [string, ...string[]]
 const PatchProductSchema = z
   .object({
     name: z.string().trim().min(2).max(200).optional(),
+    slug: z
+      .string()
+      .trim()
+      .min(2)
+      .max(200)
+      .regex(
+        /^[a-z0-9-]+$/,
+        "Slug must be lowercase letters, numbers, hyphens only"
+      )
+      .optional(),
     brandName: z.string().trim().min(1).max(100).optional(),
     category: z.enum(ALLOWED_CATEGORIES).optional(),
     priceMrp: z.coerce.number().int().positive().max(1_000_000).optional(),
@@ -76,6 +86,21 @@ export async function PATCH(
     );
   }
 
+  // If the slug is being changed, reject up-front if another product already
+  // uses the new value. (Without this check, Prisma would surface a raw
+  // P2002 unique-constraint error.)
+  if (data.slug && data.slug !== existing.slug) {
+    const slugCollision = await prisma.product.findUnique({
+      where: { slug: data.slug },
+    });
+    if (slugCollision) {
+      return NextResponse.json(
+        { error: `A product with the slug "${data.slug}" already exists` },
+        { status: 409 }
+      );
+    }
+  }
+
   let brandId: string | undefined;
   if (data.brandName) {
     const allBrands = await prisma.brand.findMany();
@@ -92,6 +117,7 @@ export async function PATCH(
     where: { id },
     data: {
       ...(data.name !== undefined && { name: data.name }),
+      ...(data.slug !== undefined && { slug: data.slug }),
       ...(brandId !== undefined && { brandId }),
       ...(data.category !== undefined && { category: data.category }),
       ...(data.priceMrp !== undefined && { priceMrp: data.priceMrp }),
